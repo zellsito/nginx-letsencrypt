@@ -5,6 +5,7 @@ services:
     image: bitnami/mariadb:latest
     container_name: moodle-db
     environment:
+      - ALLOW_EMPTY_PASSWORD=yes 
       - MARIADB_USER=bn_moodle 
       - MARIADB_PASSWORD=bitnami
       - MARIADB_DATABASE=bitnami_moodle
