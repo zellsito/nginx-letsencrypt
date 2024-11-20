@@ -16,8 +16,8 @@ services:
     image: bitnami/moodle:latest
     container_name: moodle
     ports:
-      - 8200:80
-      - 8443:443
+      - 8200:8080
+      - 8443:8443
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
       - MOODLE_DATABASE_USER=bn_moodle 
@@ -30,15 +30,4 @@ services:
       - ./moodledata_data:/bitnami/moodledata  
     depends_on:
       - mariadb  
-
-
-  
-  certbot:
-    container_name: certbot2
-    image: certbot/certbot
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    command: certonly --webroot -w /var/www/certbot --keep-until-expiring --email lucho@luxton.com.ar -d moodle2.luxton.com.ar --agree-tos
-
 
