@@ -15,6 +15,9 @@ services:
   moodle:
     image: bitnami/moodle:latest
     container_name: moodle
+    ports:
+      - 8080:8080
+      - 8443:8443
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
       - MOODLE_DATABASE_USER=bn_moodle 
