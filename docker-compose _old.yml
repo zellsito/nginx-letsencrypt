@@ -6,4 +6,27 @@ services:
     image: crccheck/hello-world
     ports:
       - "80:8000"
-  
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    depends_on:
+      - certbot
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot2
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: >
+      sh -c "trap exit TERM;
+      while :; do certbot certonly --webroot -w /var/www/certbot
+      --agree-tos --no-eff-email
+      --email lucho@luxton.com.ar
+      -d moodle2.luxton.com.ar && sleep 12h || sleep 1h; done"
