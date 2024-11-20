@@ -1,10 +1,35 @@
 version: '3.8'
 
 services:
-  helloworld:
-    container_name: helloworld
-    image: crccheck/hello-world
-    
+  mariadb:
+    image: bitnami/mariadb:latest
+    container_name: moodle-db
+    environment:
+      - MARIADB_USER=bn_moodle 
+      - MARIADB_PASSWORD=bitnami
+      - MARIADB_DATABASE=bitnami_moodle
+    volumes:
+      - ./moodle_db:/var/lib/mysql
+
+  moodle:
+    image: bitnami/moodle:latest
+    container_name: moodle
+    ports:
+      - "8200:8080"
+      - "8443:8443"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MOODLE_DATABASE_USER=bn_moodle 
+      - MOODLE_DATABASE_PASSWORD=bitnami
+      - MOODLE_DATABASE_NAME=bitnami_moodle
+      - MOODLE_USERNAME=User
+      - MOODLE_PASSWORD=p4ssw0rd      
+    volumes:
+      - ./moodle_data:/bitnami/moodle
+      - ./moodledata_data:/bitnami/moodledata  
+    depends_on:
+      - mariadb  
+
   nginx:
     container_name: nginx
     restart: unless-stopped
@@ -16,7 +41,7 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-
+  
   certbot:
     container_name: certbot2
     image: certbot/certbot
@@ -25,4 +50,4 @@ services:
       - ./certbot/www:/var/www/certbot
     command: certonly --webroot -w /var/www/certbot --keep-until-expiring --email lucho@luxton.com.ar -d moodle2.luxton.com.ar --agree-tos
 
-  
+
